@@ -1,0 +1,57 @@
+package main
+
+import (
+	"bufio"
+	"context"
+	"fmt"
+	"log"
+	"os"
+	"strings"
+
+	"github.com/google/generative-ai-go/genai"
+	"google.golang.org/api/option"
+)
+
+func ceil() {
+	ctx := context.Background()
+	// Access your API key as an environment variable (see "Set up your API key" above)
+	client, err := genai.NewClient(ctx, option.WithAPIKey("AIzaSyCbH0ZXdckaRERIocQtiPgiW3EFQiKUtuU"))
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer client.Close()
+
+	// The Gemini 1.5 models are versatile and work with both text-only and multimodal prompts
+	model := client.GenerativeModel("gemini-1.5-flash")
+
+	for {
+		// Read the prompt from the user
+		fmt.Print("Enter prompt here (or 'exit' to quit): ")
+		reader := bufio.NewReader(os.Stdin)
+		data, err := reader.ReadString('\n')
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		// Check if the user wants to exit
+		if strings.TrimSpace(data) == "exit" || strings.TrimSpace(data) == "EXIT" || strings.TrimSpace(data) == "Exit" {
+			fmt.Println("Goodbye!")
+			break
+		}
+
+		resp, err := model.GenerateContent(ctx, genai.Text(data))
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		// Access the generated text
+		if len(resp.Candidates) > 0 && len(resp.Candidates[0].Content.Parts) > 0 {
+			fmt.Println(resp.Candidates[0].Content.Parts[0])
+		} else {
+			fmt.Println("No content generated")
+		}
+	}
+}
+func main() {
+	ceil()
+}
