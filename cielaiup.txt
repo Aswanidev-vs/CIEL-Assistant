@@ -46,7 +46,7 @@ func main() {
 		promptEntry.SetText("") // Clear the input after sending
 
 		ctx := context.Background()
-		client, err := genai.NewClient(ctx, option.WithAPIKey("AIzaSyCvFhU02TMOfF83R4_W9FP-V3OnagnHk-U"))
+		client, err := genai.NewClient(ctx, option.WithAPIKey("YOUR-API-KEY"))
 		if err != nil {
 			log.Fatal(err)
 		}
